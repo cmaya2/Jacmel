@@ -51,32 +51,32 @@ def main():
                             unformatted_segments.append(elements)
                     formatted_segments = [x for x in unformatted_segments if x != ['\n']]
             try:
-                if filename[0] == "832":
-                    conversion = Convert_832(formatted_segments, path, mantis_import_path, filename[1], client_id, facility)
-                    conversion.parse_edi()
-                    conversion_997 = Convert_997(formatted_segments, path, mantis_import_path, filename[1], client_id, facility, connection)
-                    conversion_997.produce_997()
-                    os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[1] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
-                if filename[0] == "940":
-                    conversion = Convert_940(formatted_segments, path, mantis_import_path, filename[0], client_id, facility)
-                    conversion.parse_edi()
-                    # conversion_997 = Convert_997(formatted_segments, filename[0])
-                    # conversion_997.produce_997(formatted_segments, filename[0])
-                    # os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[0] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
-                if filename[0] == "943":
-                    conversion = Convert_943(formatted_segments, path, mantis_import_path, filename[0], client_id, facility)
-                    conversion.parse_edi()
+                # if filename[0] == "832":
+                #     conversion = Convert_832(formatted_segments, path, mantis_import_path, filename[1], client_id, facility)
+                #     conversion.parse_edi()
+                #     # conversion_997 = Convert_997(formatted_segments, path, mantis_import_path, filename[1], client_id, facility, connection)
+                #     # conversion_997.produce_997()
+                #     # os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[1] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
+                # if filename[0] == "940":
+                #     conversion = Convert_940(formatted_segments, path, mantis_import_path, filename[0], client_id, facility)
+                #     conversion.parse_edi()
+                #     # conversion_997 = Convert_997(formatted_segments, filename[0])
+                #     # conversion_997.produce_997(formatted_segments, filename[0])
+                #     os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[0] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
+                # if filename[0] == "943":
+                #     conversion = Convert_943(formatted_segments, path, mantis_import_path, filename[0], client_id, facility)
+                #     conversion.parse_edi()
                 #     conversion_997 = Convert_997(formatted_segments, filename[0])
                 #     conversion_997.produce_997(formatted_segments, filename[0])
-                    os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[0] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
-                if filename[0] == "944":
-                    conversion = Convert_944(path + "In\\" + file, path, mantis_import_path, filename[0], client_id, connection)
-                    conversion.parse_xml()
-                    os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[0] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
-                # if filename[0] == "945":
-                #     conversion = Convert_945(path + "In\\" + file, path, mantis_import_path, filename[0], client_id, connection)
+                #     os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[0] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
+                # if filename[0] == "944":
+                #     conversion = Convert_944(path + "In\\" + file, path, mantis_import_path, filename[0], client_id, connection)
                 #     conversion.parse_xml()
                 #     os.replace(path + "In\\" + file, path + "In\\Archive\\" + filename[0] + "\\" + rem_extension[0] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
+                if filename[0] == "945":
+                    conversion = Convert_945(path + "In\\" + file, path, mantis_import_path, filename[0], client_id, connection)
+                    conversion.parse_xml()
+                    os.replace(path + "In\\" + file, "C:\\\\FTP\\GPAEDIProduction\\BK1-Jacmel\\Archive\\" + file)
             except BaseException:
                 logger = logging.getLogger()
                 fileHandler = logging.FileHandler(
@@ -86,7 +86,7 @@ def main():
                 server = str(path).split("\\")
                 smtp_handler = logging.handlers.SMTPHandler(mailhost=("smtp.office365.com", 587),
                                                             fromaddr="noreply@gpalogisticsgroup.com",
-                                                            toaddrs=["cmaya@gpalogisticsgroup.com", "gpaops20@gpalogisticsgroup.com", "reyna.diaz@gpalogisticsgroup.com"],
+                                                            toaddrs=["cmaya@gpalogisticsgroup.com", "genesis.orozco@gpalogisticsgroup.com", "reyna.diaz@gpalogisticsgroup.com", "gpaops18@gpalogisticsgroup.com"],
                                                             subject=str(client_name[0]) + "-" + server[4] + ": " + file + " Failed to process.",
                                                             credentials=('noreply@gpalogisticsgroup.com', 'Turn*17300'),
                                                             secure=())

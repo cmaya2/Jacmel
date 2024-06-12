@@ -39,9 +39,6 @@ class Convert_832:
                 item_upc_tag.text = seg[5]
                 style_tag = et.SubElement(item_header_tag, 'Style')
                 style_tag.text = seg[3]
-                color_tag = et.SubElement(item_header_tag, 'Color')
-                size_tag = et.SubElement(item_header_tag, 'Size')
-                size_tag.text = seg[9]
                 item_description_tag = et.SubElement(item_header_tag, 'ItemDescription')
                 product_group_tag = et.SubElement(item_header_tag, 'ProductGroup')
                 product_group_tag.text = seg[3]
@@ -50,22 +47,16 @@ class Convert_832:
                 pack_quantity_tag = et.SubElement(item_header_tag, 'PackQuantity')
                 pack_size_unit_of_measure_tag = et.SubElement(item_header_tag, 'PackSizeUnitOfMeasure')
                 pack_size_unit_of_measure_tag.text = 'EA'
-            if seg[0] == 'PID' and seg[2] == '73':
-                color_tag.text = seg[5]
-            if seg[0] == 'PID' and seg[2] == '74':
-                size_tag.text = seg[5]
-                item_description_tag.text = style_tag.text + '-' + color_tag.text + '-' + size_tag.text
-            if seg[0] == 'PID' and seg[2] == 'DM':
-                item_number = item_number + "-" + seg[5]
-                item_number_tag.text = str(item_number).replace('\n', '')
+            if seg[0] == 'PID' and seg[1] =='F':
+                item_description_tag.text = seg[2]
             if seg[0] == 'G55':
-                pack_quantity_tag.text = seg[13]
+                pack_quantity_tag.text = "1"
 
         # Generating File after loop and archiving
         tree = et.ElementTree(root)
         et.indent(tree, space="\t", level=0)
-        tree.write(self.mantis_import_path + self.transaction_number + "_" + self.client_id + "_" + datetime.now().strftime(
-            "%Y%m%d%H%M%S") + "_" + str(unique_identifier) + ".xml", encoding="UTF-8", xml_declaration=True)
-        tree.write(self.path + "Archive_out\\" + self.transaction_number + "\\" + self.transaction_number + "_"
+        # tree.write(self.mantis_import_path + self.transaction_number + "_" + self.client_id + "_" + datetime.now().strftime(
+        #     "%Y%m%d%H%M%S") + "_" + str(unique_identifier) + ".xml", encoding="UTF-8", xml_declaration=True)
+        tree.write(self.path + "Out\\Archive\\832\\832_"
                    + self.client_id + "_" + datetime.now().strftime("%Y%m%d%H%M%S") + "_" + str(unique_identifier) +
                    ".xml", encoding="UTF-8", xml_declaration=True)

@@ -31,6 +31,7 @@ class Convert_944:
         oak = et.parse(self.XML)
         rooted = oak.getroot()
         counter = 0
+        segment_count = 0
         for element in rooted.iter():
             if element.tag == 'ReceiptHeader':
                 for ReceiptHeader_child_element in element:
@@ -122,27 +123,25 @@ class Convert_944:
                         seal_number = ReferenceInformation_child_element.text
                     elif ReferenceInformation_child_element.tag == 'ReferenceNumber':
                         reference_number = ReferenceInformation_child_element.text
-        try:
-            if len(shipment_id) > 0:
-                pass
-        except TypeError:
-            os.replace(self.XML, self.path + "In\\Archive\\" + self.transaction_number + "\\shipid_" + rem_extension[8] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
-            raise Exception("This reciept confirmation processed without a shipment ID")
+        # try:
+        #     if len(shipment_id) > 0:
+        #         pass
+        # except TypeError:
+        #     os.replace(self.XML, self.path + "In\\Archive\\" + self.transaction_number + "\\shipid_" + rem_extension[8] + '_' + datetime.now().strftime("%Y%m%d%H%M%S") + ".txt")
+        #     raise Exception("This reciept confirmation processed without a shipment ID")
         cursor = connection.cursor()
         cursor.execute("SELECT sequence_number FROM public.sequence where client='general'")
         data = cursor.fetchone()
         sequence_number = int(data[0]) + 1
         cursor.execute("update sequence set sequence_number =" + str(sequence_number) + " where client='general'")
         connection.commit()
-        header_string = 'ISA*00*          *00*          *ZZ*GPALOGISTICS   *12*9095988799     *' + datetime.now().strftime("%y%m%d") + '*' + datetime.now().strftime("%H%M") + '*U*00401*' + str(sequence_number) + '*0*P*>~' \
-                        'GS*RE*GPALOGISTICS*9095988799*' + datetime.now().strftime("%Y%m%d") + '*' + datetime.now().strftime("%H%M") + '*' + str(sequence_number)[-4:] + '*X*004030~' \
+        header_string = 'ISA*00*          *00*          *ZZ*GPALOGISTICS   *12*7183494307     *' + datetime.now().strftime("%y%m%d") + '*' + datetime.now().strftime("%H%M") + '*U*00403*' + str(sequence_number) + '*0*P*>~' \
+                        'GS*RE*GPALOGISTICS*7183494307*' + datetime.now().strftime("%Y%m%d") + '*' + datetime.now().strftime("%H%M") + '*' + str(sequence_number)[-4:] + '*X*004030~' \
                         'ST*944*1001~' \
-                        'W17*F*' + datetime.now().strftime("%Y%m%d") + '*' + purchase_order_number + '*' + shipment_id + '~' \
+                        'W17*F*' + datetime.now().strftime("%Y%m%d") + '*' + depositor_order_number + '*' + purchase_order_number + '*' + shipment_id + '~' \
                         'N1*WH*GPA Logistics Group~' \
-                        'N1*DE*Nexgrill Industries Inc~' \
                         'N9*PO*' + str(purchase_order_number) + '~' \
                         'G62*09*' + datetime.now().strftime("%Y%m%d") + '~'
-
         for element in rooted.iter():
             if element.tag == 'ReceiptDetail':
                 for ReceiptDetail_child_element in element:
@@ -194,10 +193,7 @@ class Convert_944:
                             elif Item_sub_element.tag == 'PackQuantity':
                                 pack_quantity = Item_sub_element.text
                             elif Item_sub_element.tag == 'InnerPackQuantity':
-                                if size == 'PPK':
-                                    inner_pack_quantity = Item_sub_element.text
-                                else:
-                                    inner_pack_quantity = '1'
+                                inner_pack_quantity = '1'
                             elif Item_sub_element.tag == 'PackSize':
                                 pack_size = Item_sub_element.text
                             elif Item_sub_element.tag == 'PackSizeUnitOfMeasure':
@@ -221,10 +217,13 @@ class Convert_944:
                         # Generating dynamic values
                         if int(received_quantity) == 0:
                             raise Exception("Container received with a quantity of 0.")
-                        body_string = 'W07*' + received_quantity + '*EA**VN*' + item_number + '~'
+                        body_string = 'LX*' + str(counter) + '~' \
+                                      'W07*' + received_quantity + '*EA**VN*' + item_number + '~'
                         header_string = header_string + body_string
-        segment_count = counter + 8
-        footer_string = 'W14*' + str(total_quantity_shipped) + '~' \
+                        segment_count = segment_count + 2
+        segment_count = segment_count + 7
+        print(segment_count)
+        footer_string = 'W14*' + received_quantity + '*' + str(total_quantity_shipped) + '~' \
                         'SE*' + str(segment_count) + '*1001~' \
                         'GE*1*' + str(sequence_number)[-4:] + '~' \
                         'IEA*1*' + str(sequence_number) + '~'
